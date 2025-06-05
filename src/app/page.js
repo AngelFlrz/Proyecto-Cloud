@@ -1,9 +1,9 @@
 // pages/login.js
-
+'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { app } from '../lib/firebase'; // Importa tu configuración desde un archivo separado
+import { app } from 'lib/firebase'; // Importa tu configuración desde un archivo separado
 
 const auth = getAuth(app);
 
