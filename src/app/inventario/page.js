@@ -39,6 +39,7 @@ export default function Inventario() {
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
+    await verificarYEnviarAlerta(nombre, cantidad);
     if (!nombre || !cantidad) return;
     if (editId) {
       const productoRef = doc(db, 'productos', editId);
@@ -46,7 +47,7 @@ export default function Inventario() {
     } else {
       await addDoc(collection(db, 'productos'), { nombre, cantidad: parseInt(cantidad) });
     }
-    await verificarYEnviarAlerta(nombre, parseInt(cantidad));
+    
 
     setNombre('');
     setCantidad('');
@@ -74,11 +75,14 @@ export default function Inventario() {
   const umbral = 10; // puedes ajustar este valor
 
   if (cantidad < umbral) {
-    await fetch('../lib/send-alert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productName: nombre, quantity: cantidad })
-    });
+    await fetch('/api/send-alert', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ nombre, cantidad })
+});
+
   }
 };
 
@@ -104,7 +108,7 @@ export default function Inventario() {
           </button>
         </div>
 
-        <form onSubmit={manejarEnvio} className="space-y-4 mb-6">
+        <form method='POST' onSubmit={manejarEnvio} className="space-y-4 mb-6">
           <input
             type="text"
             value={nombre}
