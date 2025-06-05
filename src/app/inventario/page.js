@@ -46,6 +46,7 @@ export default function Inventario() {
     } else {
       await addDoc(collection(db, 'productos'), { nombre, cantidad: parseInt(cantidad) });
     }
+    await verificarYEnviarAlerta(nombre, parseInt(cantidad));
 
     setNombre('');
     setCantidad('');
@@ -69,7 +70,18 @@ export default function Inventario() {
     router.push('/login');
   };
 
-  
+  const verificarYEnviarAlerta = async (nombre, cantidad) => {
+  const umbral = 10; // puedes ajustar este valor
+
+  if (cantidad < umbral) {
+    await fetch('../lib/send-alert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productName: nombre, quantity: cantidad })
+    });
+  }
+};
+
 
   if (loading) {
     return (
